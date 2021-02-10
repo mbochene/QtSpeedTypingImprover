@@ -56,8 +56,21 @@ GameState GameModel::getGameState() const
     return state;
 }
 
+GameOverScore GameModel::getGameOverScore() const
+{
+    GameOverScore score;
+    score.netWPM = calculateNetWPM();
+    score.timeSec = static_cast<int>(timeSeconds);
+    score.typedEntries = typedEntries;
+    score.typingErrors = typingErrors;
+    return score;
+}
+
 void GameModel::handleKeyPressed(const QString& key)
 {
+    if(!timer->isActive())
+        return;
+
     if(key.compare(enter) != 0)
     {
         currentInputWord += key;
@@ -96,13 +109,13 @@ void GameModel::handleWordOutOfBounds(const QString& word)
     else
     {
         stopGame();
-        emit gameOver();
+        emit gameOver(getGameOverScore());
     }
 }
 
 void GameModel::handleSpeedChangeRequest(const int& speed)
 {
-    if((speed-5) * (speed-1) <= 0)
+    if((speed - maxSpeed) * (speed - minSpeed) <= 0)
         this->speed = speed;
 }
 
@@ -134,7 +147,7 @@ int GameModel::calculateNetWPM() const
 
 float GameModel::calculateNewWordInterval() const
 {
-    const float candidate = static_cast<float>(4500 - (1000*(speed-1)));
+    const float candidate = static_cast<float>( 4500 - (1200 * (speed - 1) - 300 * (speed-2)) );
     return candidate > 1000 ? candidate : 1000;
 }
 

@@ -15,6 +15,11 @@ struct GameState
     QString currentInputWord;
 };
 
+struct GameOverScore
+{
+    int timeSec, typingErrors, netWPM, typedEntries;
+};
+
 class GameModel : public QObject
 {
     Q_OBJECT
@@ -26,6 +31,7 @@ class GameModel : public QObject
         QString prepareNewGame(const QString& language);
         void stopGame();
         GameState getGameState() const;
+        GameOverScore getGameOverScore() const;
 
     public slots:
         void handleKeyPressed(const QString& key);
@@ -35,7 +41,7 @@ class GameModel : public QObject
     signals:
         void update(const GameState& state, const QString& newWord);
         void deleteFloatingWord(const int& wordIndex);
-        void gameOver();
+        void gameOver(const GameOverScore& score);
 
     private slots:
         void handleUpdate();
@@ -54,7 +60,7 @@ class GameModel : public QObject
 
         float timeSeconds, timeMilliseconds;
         int speed, typedEntries, missedWords, typingErrors;
-        const int maxLives = 5;
+        const int maxLives = 5, minSpeed = 1, maxSpeed = 5;
 
         int calculateNetWPM() const;
         float calculateNewWordInterval() const;

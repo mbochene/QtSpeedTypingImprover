@@ -10,18 +10,10 @@ CONFIG += c++11
 
 include(keyboardHandlers/keyboardHandlers.pri)
 include(engine/engine.pri)
+include(gui/gui.pri)
 
 SOURCES += \
     main.cpp \
-    qgamewidget.cpp \
-    window.cpp
-
-HEADERS += \
-    qgamewidget.h \
-    window.h
-
-FORMS += \
-    window.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -33,7 +33,6 @@ QString GameModel::prepareNewGame(const QString& language)
     distribution = std::uniform_int_distribution<>(0, wordSet.size()-1);
     const QString newWord = getRandomWord();
     floatingWords.append(newWord);
-    setChallengeSpeedLevel(language);
     return newWord;
 }
 
@@ -48,10 +47,10 @@ void GameModel::stopGame()
 GameState GameModel::getGameState() const
 {
     GameState state;
-    state.timeSec = static_cast<int>(timeSeconds);
+    state.timeSec = timeSeconds < 99999 ? static_cast<int>(timeSeconds) : 99999;  // so that the number does not go through the label
     state.speed = speed;
-    state.typingErrors = typingErrors;
-    state.netWPM = calculateNetWPM();
+    state.typingErrors = typingErrors < 99999 ? typingErrors : 99999;   // so that the number does not go through the label
+    state.netWPM = static_cast<int>(calculateNetWPM());
     state.currentInputWord = currentInputWord;
     state.lives = gameMode.compare(challenge) == 0 ? maxLives - missedWords : maxLives;
     return state;
@@ -60,7 +59,7 @@ GameState GameModel::getGameState() const
 GameOverScore GameModel::getGameOverScore() const
 {
     GameOverScore score;
-    score.netWPM = calculateNetWPM();
+    score.netWPM = static_cast<int>(calculateNetWPM());
     score.timeSec = static_cast<int>(timeSeconds);
     score.typedEntries = typedEntries;
     score.typingErrors = typingErrors;
@@ -122,7 +121,7 @@ void GameModel::handleSpeedChangeRequest(const int& speed)
 
 void GameModel::handleUpdate()
 {
-    const float intervalMilliseconds = static_cast<float>(this->intervalMilliseconds);
+    const qreal intervalMilliseconds = this->intervalMilliseconds;
     timeSeconds += intervalMilliseconds / 1000;
     timeMilliseconds += intervalMilliseconds;
     if(timeMilliseconds >= calculateNewWordInterval())
@@ -139,24 +138,16 @@ void GameModel::handleUpdate()
     }
 }
 
-void GameModel::setChallengeSpeedLevel(const QString& language)
-{
-    if(language.compare(QString("English")) == 0)
-        challengeSpeedLevel = 8;
-    else
-        challengeSpeedLevel = 9;
-}
-
-int GameModel::calculateNetWPM() const
+qreal GameModel::calculateNetWPM() const
 {
     if(timeSeconds > 0)
-        return static_cast<int>(((static_cast<float>(typedEntries)/5) - static_cast<float>(typingErrors)) / (timeSeconds/60));
+        return ((static_cast<qreal>(typedEntries)/5) - static_cast<qreal>(typingErrors)) / (timeSeconds/60);
     return 0;
 }
 
-float GameModel::calculateNewWordInterval() const
+qreal GameModel::calculateNewWordInterval() const
 {
-    const float candidate = static_cast<float>( 4500 - (1200 * (speed - 1) - 300 * (speed-2)) );
+    const qreal candidate = static_cast<qreal>( 4500 - (1200 * (speed - 1) - 300 * (speed-2)) );
     return candidate > 1000 ? candidate : 1000;
 }
 

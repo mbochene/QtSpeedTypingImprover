@@ -110,16 +110,18 @@ void Window::updateInputLabel(const QString& text)
     if(text.compare(inputLabelText) != 0)
     {
         inputLabelText = text;
+        /*
         QFont f = ui->inputLabel->font(); //Get label font
         const QFontMetrics metrics(f);
         const QSize size = metrics.size(0, text); //Get size of text
-        const float widthFactor = static_cast<float>(ui->inputLabel->width()) / static_cast<float>(size.width()); //Get the width factor
-        const float heightFactor =  static_cast<float>(ui->inputLabel->height()) / static_cast<float>(size.height()); //Get the height factor
-        const double factor = static_cast<double>(qMin(widthFactor, heightFactor)); //To fit contents in the screen select as factor
-                                                                                    //the minimum factor between width and height
+        const qreal widthFactor = static_cast<qreal>(ui->inputLabel->width()) / static_cast<qreal>(size.width()); //Get the width factor
+        const qreal heightFactor =  static_cast<qreal>(ui->inputLabel->height()) / static_cast<qreal>(size.height()); //Get the height factor
+        const qreal factor = qMin(widthFactor, heightFactor); //To fit contents in the screen select as factor
+                                                              //the minimum factor between width and height
         f.setPointSizeF(0.8 * f.pointSizeF() * factor); //Set font size
-        ui->inputLabel->setText(text);
         ui->inputLabel->setFont(f); //Set the adjusted font to the label
+        */
+        ui->inputLabel->setText(text);
     }
 }
 

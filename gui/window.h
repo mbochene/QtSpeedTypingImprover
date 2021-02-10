@@ -21,7 +21,7 @@ class Window : public QWidget
 
     public:
         Window(QWidget *parent = nullptr);
-        ~Window();
+        ~Window() override;
 
     signals:
         void gameModeChosen(const QString& gameMode);
@@ -45,7 +45,7 @@ class Window : public QWidget
 
     private:
         Ui::Window *ui;
-        std::mt19937 generator = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count());
+        std::mt19937 generator = std::mt19937(static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()));
         std::uniform_int_distribution<> heightDistribution = std::uniform_int_distribution<>(0, 10);
         const QString challengeText = QString("Challenge");
         const QString speedText = QString("Speed: ");

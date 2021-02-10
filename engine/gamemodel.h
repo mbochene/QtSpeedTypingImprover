@@ -49,7 +49,7 @@ class GameModel : public QObject
     private:
         const QString enter = QString("\r");
         const QString challenge = QString("Challenge");
-        std::mt19937 generator = std::mt19937(std::chrono::system_clock::now().time_since_epoch().count());
+        std::mt19937 generator = std::mt19937(static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()));
         std::uniform_int_distribution<> distribution;
         const int intervalMilliseconds = 17;
         QTimer* timer;
@@ -58,13 +58,13 @@ class GameModel : public QObject
         QVector<QString> floatingWords;
         QString gameMode, currentInputWord;
 
-        float timeSeconds, timeMilliseconds;
-        int speed, typedEntries, missedWords, typingErrors, challengeSpeedLevel;
+        qreal timeSeconds, timeMilliseconds;
+        int speed, typedEntries, missedWords, typingErrors;
         const int maxLives = 5, minSpeed = 1, maxSpeed = 5;
+        const qreal challengeSpeedLevel = 9.5;
 
-        void setChallengeSpeedLevel(const QString& language);
-        int calculateNetWPM() const;
-        float calculateNewWordInterval() const;
+        qreal calculateNetWPM() const;
+        qreal calculateNewWordInterval() const;
         QString getWordSetPath(const QString& language) const;
         void setWordSet(const QString& language);
         QString getRandomWord();

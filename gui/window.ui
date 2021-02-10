@@ -582,7 +582,7 @@ QPushButton:hover {
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel" name="inputLabel">
+      <widget class="AutoTextFittingLabel" name="inputLabel">
        <property name="geometry">
         <rect>
          <x>430</x>
@@ -924,6 +924,11 @@ QPushButton:hover {
    <extends>QWidget</extends>
    <header>qgamewidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AutoTextFittingLabel</class>
+   <extends>QLabel</extends>
+   <header>autotextfittinglabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

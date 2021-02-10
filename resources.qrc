@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>wordsets/English.txt</file>
+        <file>wordsets/Polish.txt</file>
     </qresource>
 </RCC>

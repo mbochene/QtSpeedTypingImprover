@@ -9,7 +9,7 @@ class EnglishKeyboardHandler : public AbstractKeyboardHandler
         EnglishKeyboardHandler();
 
     protected:
-        virtual QString handleSpecialCharacter(const QString& character) const override;
+        virtual QString checkIfSpecialCharacter(const QString& character) const override;
 };
 
 #endif // ENGLISHKEYBOARDHANDLER_H

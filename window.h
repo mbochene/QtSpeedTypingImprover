@@ -35,6 +35,7 @@ class Window : public QWidget
         void handleGameReady(const QString& gameMode, const GameState& state, const QString& newWord);
         void handleUpdate(const GameState& state, const QString& newWord);
         void handleDeleteFloatingWord(const int& wordIndex);
+        void handleGameOver();
 
     private slots:
         void handleChallengeClicked();
@@ -55,6 +56,7 @@ class Window : public QWidget
         QVector<QGraphicsSimpleTextItem*> floatingWords;
         int previousChosenHeightLevel = -1;
         int speed;
+        int lives;
 
         void updateWidgets(const GameState& state);
         void updateInputLabel(const QString& text);
@@ -63,5 +65,6 @@ class Window : public QWidget
         void moveFloatingWords(const int& speed);
         bool isWordVisible(const QGraphicsSimpleTextItem* item) const;
         void deleteFloatingWordAt(const int& index);
+        void cleanGameScene();
 };
 #endif // WINDOW_H

@@ -6,6 +6,7 @@
 #include "gamemodel.h"
 #include "abstractkeyboardhandler.h"
 #include "englishkeyboardhandler.h"
+#include "polishkeyboardhandler.h"
 #include <memory>
 
 class Controller : public QObject

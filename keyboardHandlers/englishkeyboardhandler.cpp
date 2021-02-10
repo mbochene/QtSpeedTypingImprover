@@ -5,7 +5,7 @@ EnglishKeyboardHandler::EnglishKeyboardHandler()
 
 }
 
-QString EnglishKeyboardHandler::handleSpecialCharacter(const QString& character) const
+QString EnglishKeyboardHandler::checkIfSpecialCharacter(const QString&) const
 {
-    return character;
+    return QString("");
 }

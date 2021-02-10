@@ -15,6 +15,7 @@ Window::Window(QWidget *parent)
     connect(ui->challengeButton, &QPushButton::released, this, &Window::handleChallengeClicked);
     connect(ui->freePractiseButton, &QPushButton::released, this, &Window::handleFreePractiseClicked);
     connect(ui->englishButton, &QPushButton::released, this, [=](){ emit languageChosen(QString("English")); });
+    connect(ui->polishButton, &QPushButton::released, this, [=](){ emit languageChosen(QString("Polish")); });
     connect(ui->backButton, &QPushButton::released, this, [=](){ ui->stackedWidget->setCurrentIndex(0); });
     connect(ui->quitButton, &QPushButton::released, this, &Window::handleQuitClicked);
     connect(ui->gamePage, &QGameWidget::keyClicked, this, &Window::handleKeyClicked);
@@ -43,14 +44,21 @@ void Window::handleGameReady(const QString& gameMode, const GameState& state, co
 void Window::handleUpdate(const GameState& state, const QString& newWord)
 {
     speed = state.speed;
+    lives = state.lives;
     updateWidgets(state);
-    moveFloatingWords(state.speed);
     addNewWord(newWord);
+    moveFloatingWords(state.speed);
 }
 
 void Window::handleDeleteFloatingWord(const int& wordIndex)
 {
     deleteFloatingWordAt(wordIndex);
+}
+
+void Window::handleGameOver()
+{
+   //////////////// TODO : pokazywanie wynikow
+   cleanGameScene();
 }
 
 void Window::handleChallengeClicked()
@@ -68,9 +76,7 @@ void Window::handleFreePractiseClicked()
 void Window::handleQuitClicked()
 {
     emit quitClicked();
-    ui->stackedWidget->setCurrentIndex(0);
-    scene->clear();
-    floatingWords.clear();
+    cleanGameScene();
 }
 
 void Window::handleKeyClicked(const QKeyEvent* keyEvent)
@@ -138,7 +144,7 @@ void Window::moveFloatingWords(const int& speed)
 {
     for(QGraphicsSimpleTextItem* floatingWord : floatingWords)
     {
-        floatingWord->setPos(floatingWord->x() - (speed*0.5), floatingWord->y());
+        floatingWord->setPos(floatingWord->x() - (0.5 + (speed * 0.12)), floatingWord->y());
         if(isWordVisible(floatingWord))
         {
             const qreal red = 255 * ((scene->width() - floatingWord->x()) / scene->width());
@@ -156,6 +162,9 @@ void Window::moveFloatingWords(const int& speed)
         else
         {
             emit wordOutOfBounds(floatingWord->text());
+            qDebug() << lives;
+            if(lives == 1)
+                return;
         }
     }
 }
@@ -170,4 +179,11 @@ void Window::deleteFloatingWordAt(const int& index)
     QGraphicsSimpleTextItem* floatingWord = floatingWords.at(index);
     scene->removeItem(floatingWord);
     floatingWords.removeAt(index);
+}
+
+void Window::cleanGameScene()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+    scene->clear();
+    floatingWords.clear();
 }

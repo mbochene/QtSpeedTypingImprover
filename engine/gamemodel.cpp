@@ -5,6 +5,8 @@ GameModel::GameModel()
 {
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GameModel::handleUpdate);
+    floatingWords = QVector<QString>();
+    currentInputWord = QString();
 }
 
 void GameModel::setGameMode(const QString& gameMode)
@@ -21,8 +23,6 @@ QString GameModel::getGameMode() const
 QString GameModel::prepareNewGame(const QString& language)
 {
     setWordSet(language);
-    floatingWords = QVector<QString>();
-    currentInputWord = QString("");
     timeSeconds = 0;
     timeMilliseconds = 0;
     speed = 1;
@@ -39,7 +39,9 @@ QString GameModel::prepareNewGame(const QString& language)
 void GameModel::stopGame()
 {
     timer->stop();
-    wordSet = QVector<QString>();
+    wordSet.clear();
+    floatingWords.clear();
+    currentInputWord.clear();
 }
 
 GameState GameModel::getGameState() const
@@ -50,11 +52,11 @@ GameState GameModel::getGameState() const
     state.typingErrors = typingErrors;
     state.netWPM = calculateNetWPM();
     state.currentInputWord = currentInputWord;
-    state.lives = maxLives - missedWords;
+    state.lives = gameMode.compare(challenge) == 0 ? maxLives - missedWords : maxLives;
     return state;
 }
 
-void GameModel::handleKeyClicked(const QString& key)
+void GameModel::handleKeyPressed(const QString& key)
 {
     if(key.compare(enter) != 0)
     {
@@ -68,14 +70,17 @@ void GameModel::handleKeyClicked(const QString& key)
         {
             typedEntries += currentInputWord.size();
             floatingWords.removeAt(foundWordIndex);
-            // handle speed changes for challenge mode
+
+            if(gameMode.compare(challenge) == 0 && calculateNetWPM() / 9 > speed)
+                handleSpeedChangeRequest(speed + 1);
+
             emit deleteFloatingWord(foundWordIndex);
         }
         else
         {
             typingErrors += 1;
         }
-        currentInputWord = QString("");
+        currentInputWord.clear();
     }
 }
 
@@ -84,12 +89,20 @@ void GameModel::handleWordOutOfBounds(const QString& word)
     const int wordIndex = floatingWords.indexOf(word);
     floatingWords.removeAt(wordIndex);
     missedWords += 1;
-    emit deleteFloatingWord(wordIndex);
+    if(gameMode.compare(challenge) !=0 || missedWords < maxLives)
+    {
+        emit deleteFloatingWord(wordIndex);
+    }
+    else
+    {
+        stopGame();
+        emit gameOver();
+    }
 }
 
 void GameModel::handleSpeedChangeRequest(const int& speed)
 {
-    if((speed-10) * (speed-1) <= 0)
+    if((speed-5) * (speed-1) <= 0)
         this->speed = speed;
 }
 
@@ -121,13 +134,16 @@ int GameModel::calculateNetWPM() const
 
 float GameModel::calculateNewWordInterval() const
 {
-    return static_cast<float>(5100 - (460*(speed-1)));
+    const float candidate = static_cast<float>(4500 - (1000*(speed-1)));
+    return candidate > 1000 ? candidate : 1000;
 }
 
 QString GameModel::getWordSetPath(const QString& language) const
 {
     if(language.compare(QString("English")) == 0)
         return QString(":/wordsets/English.txt");
+    else if(language.compare(QString("Polish")) == 0)
+        return QString(":/wordsets/Polish.txt");
 
     return QString(":/wordsets/English.txt");
 }
@@ -141,6 +157,7 @@ void GameModel::setWordSet(const QString& language)
         return;
     }
     QTextStream in(&file);
+    in.setCodec("UTF-8");
     while (!in.atEnd())
         wordSet.append(in.readLine());
 }

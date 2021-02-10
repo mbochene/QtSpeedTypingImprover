@@ -9,10 +9,10 @@ class AbstractKeyboardHandler
         AbstractKeyboardHandler();
         virtual ~AbstractKeyboardHandler() {}
 
-        QString handleKeyboardPress(const QString& pressedKey, const bool& altPressed) const;
+        QString handleKeyboardPress(const QString& pressedKey) const;
 
     protected:
-        virtual QString handleSpecialCharacter(const QString& character) const = 0;
+        virtual QString checkIfSpecialCharacter(const QString& character) const = 0;
 
     private:
         const QString enter = QString("\r");

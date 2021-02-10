@@ -59,9 +59,10 @@ class GameModel : public QObject
         QString gameMode, currentInputWord;
 
         float timeSeconds, timeMilliseconds;
-        int speed, typedEntries, missedWords, typingErrors;
+        int speed, typedEntries, missedWords, typingErrors, challengeSpeedLevel;
         const int maxLives = 5, minSpeed = 1, maxSpeed = 5;
 
+        void setChallengeSpeedLevel(const QString& language);
         int calculateNetWPM() const;
         float calculateNewWordInterval() const;
         QString getWordSetPath(const QString& language) const;

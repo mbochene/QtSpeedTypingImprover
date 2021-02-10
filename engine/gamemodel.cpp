@@ -33,6 +33,7 @@ QString GameModel::prepareNewGame(const QString& language)
     distribution = std::uniform_int_distribution<>(0, wordSet.size()-1);
     const QString newWord = getRandomWord();
     floatingWords.append(newWord);
+    setChallengeSpeedLevel(language);
     return newWord;
 }
 
@@ -84,7 +85,7 @@ void GameModel::handleKeyPressed(const QString& key)
             typedEntries += currentInputWord.size();
             floatingWords.removeAt(foundWordIndex);
 
-            if(gameMode.compare(challenge) == 0 && calculateNetWPM() / 9 > speed)
+            if(gameMode.compare(challenge) == 0 && calculateNetWPM() / challengeSpeedLevel > speed)
                 handleSpeedChangeRequest(speed + 1);
 
             emit deleteFloatingWord(foundWordIndex);
@@ -136,6 +137,14 @@ void GameModel::handleUpdate()
     {
         emit update(getGameState(), QString(""));
     }
+}
+
+void GameModel::setChallengeSpeedLevel(const QString& language)
+{
+    if(language.compare(QString("English")) == 0)
+        challengeSpeedLevel = 8;
+    else
+        challengeSpeedLevel = 9;
 }
 
 int GameModel::calculateNetWPM() const
